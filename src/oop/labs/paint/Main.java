@@ -1,0 +1,25 @@
+package oop.labs.paint;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.stage.Stage;
+import javafx.scene.canvas.*;
+
+public class Main extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("paint.fxml"));
+        primaryStage.setTitle("oop/labs/paint");
+        primaryStage.setScene(new Scene(root, 1200, 720));
+        primaryStage.show();
+    }
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
