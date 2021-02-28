@@ -59,25 +59,8 @@ public class PaintController {
     @FXML
     void OnClicked(MouseEvent event) {
         Button button = (Button)event.getSource();
-        ParentShapeFactory parentShapeFactory = new LineFactory();
-        switch (Integer.parseInt((button.getId()))){
-            case 1:
-                parentShapeFactory = new LineFactory();
-                break;
-            case 2:
-                parentShapeFactory = new RectangleFactory();
-                break;
-            case 3:
-                parentShapeFactory = new CircleFactory();
-                break;
-            case 4:
-                parentShapeFactory = new PolygonFactory();
-                break;
-            case 5:
-                parentShapeFactory = new PolylineFactory();
-                break;
-        }
-        ParentShape shape = parentShapeFactory.createShape();
+        ShapeFactory shapeFactory = new ShapeFactory();
+        ParentShape shape = shapeFactory.createShape(Integer.parseInt((button.getId())));
         shape.draw(canvas.getGraphicsContext2D());
     }
 
