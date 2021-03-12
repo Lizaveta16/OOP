@@ -1,21 +1,29 @@
 package org.labs.paint;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Paint;
 import org.labs.paint.factory.*;
 import org.labs.paint.shapes.ParentShape;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class PaintController {
+public class PaintController implements Initializable {
+
+    GraphicsContext graphicsContext;
+    List<ParentShapeFactory> shapeFactoryList = Arrays.asList(new LineFactory(), new RectangleFactory(), new CircleFactory(), new PolygonFactory(), new PolylineFactory());
 
     @FXML
     private MenuBar menu;
@@ -24,28 +32,16 @@ public class PaintController {
     private HBox ControlPanel;
 
     @FXML
-    private ColorPicker fullColorPicker;
+    private ColorPicker fillColorPicker;
 
     @FXML
     private ColorPicker outlineColorPicker;
 
     @FXML
-    private ComboBox<?> thicknessOutlineBox;
+    private ComboBox<Integer> thicknessOutlineBox;
 
     @FXML
-    private Button lineButton;
-
-    @FXML
-    private Button rectButton;
-
-    @FXML
-    private Button ellipseButton;
-
-    @FXML
-    private Button polygonButton;
-
-    @FXML
-    private Button brokenLineButton1;
+    private ComboBox<String> figureComboBox;
 
     @FXML
     private Label fullColorLabel;
@@ -57,15 +53,44 @@ public class PaintController {
     private Label thicknessLabel;
 
     @FXML
-    private Canvas canvas;
+    private Label figureLabel;
 
     @FXML
-    void OnClicked(MouseEvent event) {
-        Button button = (Button)event.getSource();
-        List<ParentShapeFactory> shapeFactoryList = Arrays.asList(new LineFactory(), new RectangleFactory(), new CircleFactory(), new PolygonFactory(), new PolylineFactory());
-        ParentShapeFactory parentShapeFactory = shapeFactoryList.get(Integer.parseInt((button.getId()))-1);
-        ParentShape shape = parentShapeFactory.createShape();
-        shape.draw(canvas.getGraphicsContext2D());
+    private Canvas canvas;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        ObservableList<String> figureList = FXCollections.observableArrayList("Отрезок", "Прямоугольник", "Эллипс", "Многоугольник", "Ломаная");
+        figureComboBox.getItems().setAll(figureList);
+        figureComboBox.setValue("Отрезок");
+
+        ObservableList<Integer> thicknessOutlineList = FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10);
+        thicknessOutlineBox.getItems().setAll(thicknessOutlineList);
+        thicknessOutlineBox.setValue(1);
+
+        graphicsContext = canvas.getGraphicsContext2D();
+        graphicsContext.setFill(fillColorPicker.getValue());
+        graphicsContext.setStroke(outlineColorPicker.getValue());
+        graphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
+
     }
 
+    public void onCanvasClicked(MouseEvent mouseEvent) {
+        ParentShapeFactory parentShapeFactory = shapeFactoryList.get(figureComboBox.getSelectionModel().getSelectedIndex());
+        ParentShape shape = parentShapeFactory.createShape(canvas.getGraphicsContext2D(),new Point2D(mouseEvent.getX(), mouseEvent.getY()));
+        shape.draw(graphicsContext);
+    }
+
+    public void onFillColorChanged(ActionEvent actionEvent) {
+        graphicsContext.setFill((Paint) fillColorPicker.getValue());
+    }
+
+    public void onOutlineColorChanged(ActionEvent actionEvent) {
+        graphicsContext.setStroke((Paint)outlineColorPicker.getValue());
+    }
+
+    public void onOutlineBoxChanged(ActionEvent actionEvent) {
+        graphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
+    }
 }

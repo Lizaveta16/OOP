@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -31,46 +30,26 @@
             </MenuBar>
             <HBox fx:id="ControlPanel" prefHeight="11.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;">
                <children>
-                  <ColorPicker fx:id="fullColorPicker" prefHeight="30.0" prefWidth="120.0">
+                  <ColorPicker fx:id="fillColorPicker" onAction="#onFillColorChanged" prefHeight="30.0" prefWidth="120.0">
                      <HBox.margin>
                         <Insets left="6.0" right="6.0" top="5.0" />
                      </HBox.margin>
                   </ColorPicker>
-                  <ColorPicker fx:id="outlineColorPicker" prefHeight="30.0" prefWidth="120.0">
+                  <ColorPicker fx:id="outlineColorPicker" onAction="#onOutlineColorChanged" prefHeight="30.0" prefWidth="120.0">
                      <HBox.margin>
                         <Insets left="6.0" right="6.0" top="5.0" />
                      </HBox.margin>
                   </ColorPicker>
-                  <ComboBox fx:id="thicknessOutlineBox" prefHeight="31.0" prefWidth="74.0" promptText="12">
+                  <ComboBox fx:id="thicknessOutlineBox" onAction="#onOutlineBoxChanged" prefHeight="31.0" prefWidth="74.0" promptText="12">
                      <HBox.margin>
                         <Insets left="6.0" right="6.0" top="5.0" />
                      </HBox.margin>
                   </ComboBox>
-                  <Button id="1" fx:id="lineButton" mnemonicParsing="false" onMousePressed="#OnClicked" text="Отрезок">
+                  <ComboBox fx:id="figureComboBox" prefHeight="26.0" prefWidth="166.0">
                      <HBox.margin>
-                        <Insets left="5.0" right="5.0" top="5.0" />
+                        <Insets left="6.0" right="6.0" top="5.0" />
                      </HBox.margin>
-                  </Button>
-                  <Button id="2" fx:id="rectButton" mnemonicParsing="false" onMousePressed="#OnClicked" text="Прямоугольник">
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button id="3" fx:id="ellipseButton" mnemonicParsing="false" onMousePressed="#OnClicked" text="Эллипс">
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button id="4" fx:id="polygonButton" mnemonicParsing="false" onMousePressed="#OnClicked" text="Многоугольник">
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button id="5" fx:id="brocenLineButton1" mnemonicParsing="false" onMousePressed="#OnClicked" text="Ломаная">
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
+                  </ComboBox>
                </children>
             </HBox>
             <HBox prefHeight="16.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;">
@@ -87,12 +66,17 @@
                   </Label>
                   <Label fx:id="thicknessLabel" text="Толщина">
                      <HBox.margin>
-                        <Insets left="25.0" right="25.0" />
+                        <Insets left="55.0" right="30.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="figureLabel" text="Фигуры">
+                     <HBox.margin>
+                        <Insets left="55.0" right="55.0" />
                      </HBox.margin>
                   </Label>
                </children>
             </HBox>
-            <Canvas fx:id="canvas" height="627.0" width="1200.0" />
+            <Canvas fx:id="canvas" onMouseClicked="#onCanvasClicked" height="627.0" width="1200.0" />
          </children>
       </VBox>
    </children>
