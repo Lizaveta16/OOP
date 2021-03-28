@@ -9,27 +9,28 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import org.labs.paint.factory.*;
 import org.labs.paint.shapes.ParentShape;
+import org.labs.paint.shapes.Polygon;
+import org.labs.paint.shapes.Polyline;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class PaintController implements Initializable {
 
-    GraphicsContext graphicsContext;
-    List<ParentShapeFactory> shapeFactoryList = Arrays.asList(new LineFactory(), new RectangleFactory(), new CircleFactory(), new PolygonFactory(), new PolylineFactory());
-
     @FXML
     private MenuBar menu;
 
     @FXML
-    private HBox ControlPanel;
+    private HBox controlPanel;
 
     @FXML
     private ColorPicker fillColorPicker;
@@ -56,7 +57,17 @@ public class PaintController implements Initializable {
     private Label figureLabel;
 
     @FXML
-    private Canvas canvas;
+    private Canvas mainCanvas;
+
+    @FXML
+    private Canvas prevCanvas;
+
+    private GraphicsContext mainGraphicsContext;
+    private GraphicsContext previewGraphicsContext;
+    private final List<ParentShapeFactory> shapeFactoryList = Arrays.asList(new LineFactory(), new RectangleFactory(), new CircleFactory(), new PolygonFactory(), new PolylineFactory());
+    private final List<ParentShape> shapesList = new ArrayList<>();
+    private ParentShape currShape;
+    private boolean isDrawing = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -65,32 +76,67 @@ public class PaintController implements Initializable {
         figureComboBox.getItems().setAll(figureList);
         figureComboBox.setValue("Отрезок");
 
-        ObservableList<Integer> thicknessOutlineList = FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10);
+        ObservableList<Integer> thicknessOutlineList = FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         thicknessOutlineBox.getItems().setAll(thicknessOutlineList);
         thicknessOutlineBox.setValue(1);
 
-        graphicsContext = canvas.getGraphicsContext2D();
-        graphicsContext.setFill(fillColorPicker.getValue());
-        graphicsContext.setStroke(outlineColorPicker.getValue());
-        graphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
+        mainGraphicsContext = mainCanvas.getGraphicsContext2D();
+        mainGraphicsContext.setFill(fillColorPicker.getValue());
+        mainGraphicsContext.setStroke(outlineColorPicker.getValue());
+        mainGraphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
+
+        previewGraphicsContext = prevCanvas.getGraphicsContext2D();
+        prevCanvas.setVisible(false);
 
     }
 
     public void onCanvasClicked(MouseEvent mouseEvent) {
-        ParentShapeFactory parentShapeFactory = shapeFactoryList.get(figureComboBox.getSelectionModel().getSelectedIndex());
-        ParentShape shape = parentShapeFactory.createShape(canvas.getGraphicsContext2D(),new Point2D(mouseEvent.getX(), mouseEvent.getY()));
-        shape.draw(graphicsContext);
+        if (!isDrawing){
+            ParentShapeFactory parentShapeFactory = shapeFactoryList.get(figureComboBox.getSelectionModel().getSelectedIndex());
+            currShape = parentShapeFactory.createShape(mainCanvas.getGraphicsContext2D(), new Point2D(mouseEvent.getX(), mouseEvent.getY()));
+            isDrawing = true;
+        } else{
+            if (currShape instanceof Polygon || currShape instanceof Polyline) {
+                currShape.addPoint(new Point2D(mouseEvent.getX(), mouseEvent.getY()));
+                shapesList.add(currShape);
+            } else {
+                currShape.draw(mainGraphicsContext);
+                prevCanvas.setVisible(false);
+                shapesList.add(currShape);
+                isDrawing = false;
+            }
+        }
+
+    }
+
+    public void onCanvasMouseMoved(MouseEvent mouseEvent) {
+        if (isDrawing) {
+            prevCanvas.setVisible(true);
+            previewGraphicsContext.clearRect(0, 0, prevCanvas.getWidth(), prevCanvas.getHeight());
+            currShape.update(new Point2D(mouseEvent.getX(), mouseEvent.getY()));
+            currShape.draw(previewGraphicsContext);
+        }
+    }
+
+    public void onKeyPressed(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER && (currShape instanceof Polygon || currShape instanceof Polyline)){
+            currShape.delLastPoint();
+            currShape.draw(mainGraphicsContext);
+            prevCanvas.setVisible(false);
+            isDrawing = false;
+        }
     }
 
     public void onFillColorChanged(ActionEvent actionEvent) {
-        graphicsContext.setFill((Paint) fillColorPicker.getValue());
+        mainGraphicsContext.setFill(fillColorPicker.getValue());
     }
 
     public void onOutlineColorChanged(ActionEvent actionEvent) {
-        graphicsContext.setStroke((Paint)outlineColorPicker.getValue());
+        mainGraphicsContext.setStroke(outlineColorPicker.getValue());
     }
 
     public void onOutlineBoxChanged(ActionEvent actionEvent) {
-        graphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
+        mainGraphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
     }
+
 }

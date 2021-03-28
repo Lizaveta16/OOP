@@ -12,72 +12,77 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.labs.paint.PaintController">
-   <children>
-      <VBox prefHeight="95.0" prefWidth="1200.0">
-         <children>
-            <MenuBar fx:id="menu">
-               <menus>
-                  <Menu mnemonicParsing="false" text="Файл">
-                     <items>
-                        <MenuItem mnemonicParsing="false" text="Создать" />
-                        <MenuItem mnemonicParsing="false" text="Открыть" />
-                        <MenuItem mnemonicParsing="false" text="Сохранить как..." />
-                        <MenuItem mnemonicParsing="false" text="Выход" />
-                     </items>
-                  </Menu>
-               </menus>
-            </MenuBar>
-            <HBox fx:id="ControlPanel" prefHeight="11.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#onKeyPressed" prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.labs.paint.PaintController">
+    <children>
+        <VBox prefHeight="720.0" prefWidth="1200.0">
+            <children>
+                <MenuBar fx:id="menu">
+                    <menus>
+                        <Menu mnemonicParsing="false" text="Файл">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Создать" />
+                                <MenuItem mnemonicParsing="false" text="Открыть" />
+                                <MenuItem mnemonicParsing="false" text="Сохранить как..." />
+                                <MenuItem mnemonicParsing="false" text="Выход" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <HBox fx:id="controlPanel" prefHeight="11.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;">
+                    <children>
+                        <ColorPicker fx:id="fillColorPicker" onAction="#onFillColorChanged" prefHeight="30.0" prefWidth="120.0">
+                            <HBox.margin>
+                                <Insets left="6.0" right="6.0" top="5.0" />
+                            </HBox.margin>
+                        </ColorPicker>
+                        <ColorPicker fx:id="outlineColorPicker" onAction="#onOutlineColorChanged" prefHeight="30.0" prefWidth="120.0">
+                            <HBox.margin>
+                                <Insets left="6.0" right="6.0" top="5.0" />
+                            </HBox.margin>
+                        </ColorPicker>
+                        <ComboBox fx:id="thicknessOutlineBox" onAction="#onOutlineBoxChanged" prefHeight="31.0" prefWidth="74.0">
+                            <HBox.margin>
+                                <Insets left="6.0" right="6.0" top="5.0" />
+                            </HBox.margin>
+                        </ComboBox>
+                        <ComboBox fx:id="figureComboBox" prefHeight="26.0" prefWidth="166.0">
+                            <HBox.margin>
+                                <Insets left="6.0" right="6.0" top="5.0" />
+                            </HBox.margin>
+                        </ComboBox>
+                    </children>
+                </HBox>
+                <HBox prefHeight="16.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;">
+                    <children>
+                        <Label fx:id="fullColorLabel" text="Заливка">
+                            <HBox.margin>
+                                <Insets left="35.0" right="35.0" />
+                            </HBox.margin>
+                        </Label>
+                        <Label fx:id="outlineLabel" text="Контур">
+                            <HBox.margin>
+                                <Insets left="50.0" right="25.0" />
+                            </HBox.margin>
+                        </Label>
+                        <Label fx:id="thicknessLabel" text="Толщина">
+                            <HBox.margin>
+                                <Insets left="55.0" right="30.0" />
+                            </HBox.margin>
+                        </Label>
+                        <Label fx:id="figureLabel" text="Фигуры">
+                            <HBox.margin>
+                                <Insets left="55.0" right="55.0" />
+                            </HBox.margin>
+                        </Label>
+                    </children>
+                </HBox>
+            <Pane prefHeight="650.0" prefWidth="1200.0">
                <children>
-                  <ColorPicker fx:id="fillColorPicker" onAction="#onFillColorChanged" prefHeight="30.0" prefWidth="120.0">
-                     <HBox.margin>
-                        <Insets left="6.0" right="6.0" top="5.0" />
-                     </HBox.margin>
-                  </ColorPicker>
-                  <ColorPicker fx:id="outlineColorPicker" onAction="#onOutlineColorChanged" prefHeight="30.0" prefWidth="120.0">
-                     <HBox.margin>
-                        <Insets left="6.0" right="6.0" top="5.0" />
-                     </HBox.margin>
-                  </ColorPicker>
-                  <ComboBox fx:id="thicknessOutlineBox" onAction="#onOutlineBoxChanged" prefHeight="31.0" prefWidth="74.0" promptText="12">
-                     <HBox.margin>
-                        <Insets left="6.0" right="6.0" top="5.0" />
-                     </HBox.margin>
-                  </ComboBox>
-                  <ComboBox fx:id="figureComboBox" prefHeight="26.0" prefWidth="166.0">
-                     <HBox.margin>
-                        <Insets left="6.0" right="6.0" top="5.0" />
-                     </HBox.margin>
-                  </ComboBox>
+                      <Canvas fx:id="mainCanvas" height="647.0" onMouseClicked="#onCanvasClicked" onMouseMoved="#onCanvasMouseMoved" width="1200.0" />
+                  <Canvas fx:id="prevCanvas" height="646.0" onMouseClicked="#onCanvasClicked" onMouseMoved="#onCanvasMouseMoved" width="1200.0" />
                </children>
-            </HBox>
-            <HBox prefHeight="16.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;">
-               <children>
-                  <Label fx:id="fullColorLabel" text="Заливка">
-                     <HBox.margin>
-                        <Insets left="35.0" right="35.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label fx:id="outlineLabel" text="Контур">
-                     <HBox.margin>
-                        <Insets left="50.0" right="25.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label fx:id="thicknessLabel" text="Толщина">
-                     <HBox.margin>
-                        <Insets left="55.0" right="30.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label fx:id="figureLabel" text="Фигуры">
-                     <HBox.margin>
-                        <Insets left="55.0" right="55.0" />
-                     </HBox.margin>
-                  </Label>
-               </children>
-            </HBox>
-            <Canvas fx:id="canvas" onMouseClicked="#onCanvasClicked" height="627.0" width="1200.0" />
-         </children>
-      </VBox>
-   </children>
+            </Pane>
+            </children>
+        </VBox>
+    </children>
 </Pane>

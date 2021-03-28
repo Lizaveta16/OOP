@@ -4,10 +4,10 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import org.labs.paint.shapes.Polyline;
 
-public class PolylineFactory implements ParentShapeFactory{
+public class PolylineFactory implements ParentShapeFactory {
     @Override
     public Polyline createShape(GraphicsContext graphicsContext, Point2D firstPoint) {
 
-        return new Polyline(graphicsContext, firstPoint, new Point2D(300, 400), new Point2D(200,200));
+        return new Polyline(graphicsContext, firstPoint, firstPoint);
     }
 }

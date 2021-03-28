@@ -21,7 +21,17 @@ public class Circle extends ParentShape{
     public void draw(GraphicsContext graphicsContext) {
 
         updateGraphics(graphicsContext);
-        graphicsContext.fillOval(leftUpperCorner.getX(),leftUpperCorner.getY(),height,width);
-        graphicsContext.strokeOval(leftUpperCorner.getX(),leftUpperCorner.getY(),height,width);
+        graphicsContext.fillOval(width > 0 ? leftUpperCorner.getX() : leftUpperCorner.getX() + width,
+                height > 0 ? leftUpperCorner.getY() : leftUpperCorner.getY() + height,
+                Math.abs(width), Math.abs(height));
+        graphicsContext.strokeOval(width > 0 ? leftUpperCorner.getX() : leftUpperCorner.getX() + width,
+                height > 0 ? leftUpperCorner.getY() : leftUpperCorner.getY() + height,
+                Math.abs(width), Math.abs(height));
+    }
+
+    @Override
+    public void update(Point2D newPoint) {
+        height = newPoint.getY() - leftUpperCorner.getY();
+        width = newPoint.getX() - leftUpperCorner.getX();
     }
 }

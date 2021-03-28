@@ -4,8 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 
-import java.awt.*;
-
 public abstract class ParentShape {
 
     protected Paint strokeColor;
@@ -19,6 +17,9 @@ public abstract class ParentShape {
     }
 
     public abstract void draw(GraphicsContext graphicsContext);
+    public abstract void update(Point2D newPoint);
+    public void addPoint(Point2D point){};
+    public void delLastPoint(){};
 
     protected void updateGraphics(GraphicsContext graphicsContext){
         graphicsContext.setStroke(strokeColor);

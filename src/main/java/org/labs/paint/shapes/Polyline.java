@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Polyline extends ParentShape{
+public class Polyline extends ParentShape {
 
     private List<Point2D> points;
 
@@ -23,15 +23,27 @@ public class Polyline extends ParentShape{
 
         updateGraphics(graphicsContext);
 
-        double [] xPoints = new double[points.size()];
-        double [] yPoints = new double[points.size()];
-
-        for (int i = 0; i < points.size(); i++) {
-            Point2D p = points.get(i);
-            xPoints[i] = p.getX();
-            yPoints[i] = p.getY();
+        for (int i = 0; i < points.size() - 1; i++) {
+            Point2D firstPoint = points.get(i);
+            Point2D secondPoint = points.get(i + 1);
+            graphicsContext.strokeLine(firstPoint.getX(), firstPoint.getY(), secondPoint.getX(), secondPoint.getY());
         }
-
-        graphicsContext.strokePolyline(xPoints,yPoints,points.size());
     }
+
+
+    @Override
+    public void update(Point2D newPoint) {
+        points.set(points.size() - 1, newPoint);
+    }
+
+    @Override
+    public void addPoint(Point2D point) {
+        points.add(point);
+    }
+
+    @Override
+    public void delLastPoint() {
+        points.remove(points.size()-1);
+    }
+
 }
