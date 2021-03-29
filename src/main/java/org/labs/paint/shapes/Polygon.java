@@ -15,6 +15,7 @@ public class Polygon extends ParentShape {
         super(graphicsContext);
         this.points = new ArrayList<>();
         this.points.addAll(Arrays.asList(points));
+        multipoint = true;
     }
 
     @Override

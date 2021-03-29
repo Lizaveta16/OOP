@@ -10,6 +10,12 @@ public abstract class ParentShape {
     protected Paint fillColor;
     protected double lineWidth;
 
+    protected boolean multipoint;
+
+    public boolean isMultipoint() {
+        return multipoint;
+    }
+
     protected ParentShape(GraphicsContext graphicsContext) {
         strokeColor = graphicsContext.getStroke();
         fillColor = graphicsContext.getFill();

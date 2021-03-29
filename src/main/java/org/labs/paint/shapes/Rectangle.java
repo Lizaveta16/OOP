@@ -15,6 +15,7 @@ public class Rectangle extends ParentShape{
         this.height = height;
         this.width = width;
         this.leftUpperCorner = leftUpperCorner;
+        multipoint = false;
     }
 
     @Override

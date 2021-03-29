@@ -13,6 +13,7 @@ public class Line extends ParentShape{
         super(graphicsContext);
         this.firstPoint = firstPoint;
         this.lastPoint = firstPoint;
+        multipoint = false;
     }
 
     @Override

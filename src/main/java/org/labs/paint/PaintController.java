@@ -96,7 +96,7 @@ public class PaintController implements Initializable {
             currShape = parentShapeFactory.createShape(mainCanvas.getGraphicsContext2D(), new Point2D(mouseEvent.getX(), mouseEvent.getY()));
             isDrawing = true;
         } else{
-            if (currShape instanceof Polygon || currShape instanceof Polyline) {
+            if (currShape.isMultipoint()) {
                 currShape.addPoint(new Point2D(mouseEvent.getX(), mouseEvent.getY()));
                 shapesList.add(currShape);
             } else {
@@ -119,7 +119,7 @@ public class PaintController implements Initializable {
     }
 
     public void onKeyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ENTER && (currShape instanceof Polygon || currShape instanceof Polyline)){
+        if (keyEvent.getCode() == KeyCode.ENTER && currShape.isMultipoint()){
             currShape.delLastPoint();
             currShape.draw(mainGraphicsContext);
             prevCanvas.setVisible(false);

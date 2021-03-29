@@ -15,6 +15,7 @@ public class Circle extends ParentShape{
         this.height = height;
         this.width = width;
         this.leftUpperCorner = leftUpperCorner;
+        multipoint = false;
     }
 
     @Override
