@@ -6,8 +6,8 @@ import javafx.scene.paint.Paint;
 
 public abstract class ParentShape {
 
-    protected Paint strokeColor;
-    protected Paint fillColor;
+    protected Paint strokeColour;
+    protected Paint fillColour;
     protected double lineWidth;
 
     protected boolean multipoint;
@@ -17,8 +17,8 @@ public abstract class ParentShape {
     }
 
     protected ParentShape(GraphicsContext graphicsContext) {
-        strokeColor = graphicsContext.getStroke();
-        fillColor = graphicsContext.getFill();
+        strokeColour = graphicsContext.getStroke();
+        fillColour = graphicsContext.getFill();
         lineWidth = graphicsContext.getLineWidth();
     }
 
@@ -28,8 +28,8 @@ public abstract class ParentShape {
     public void delLastPoint(){};
 
     protected void updateGraphics(GraphicsContext graphicsContext){
-        graphicsContext.setStroke(strokeColor);
-        graphicsContext.setFill(fillColor);
+        graphicsContext.setStroke(strokeColour);
+        graphicsContext.setFill(fillColour);
         graphicsContext.setLineWidth(lineWidth);
     }
 }

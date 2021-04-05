@@ -30,12 +30,12 @@
                 </MenuBar>
                 <HBox fx:id="controlPanel" prefHeight="11.0" prefWidth="1200.0" style="-fx-background-color: #cccccc;">
                     <children>
-                        <ColorPicker fx:id="fillColorPicker" onAction="#onFillColorChanged" prefHeight="30.0" prefWidth="120.0">
+                        <ColorPicker fx:id="fillColorPicker" onAction="#onFillColourChanged" prefHeight="30.0" prefWidth="120.0">
                             <HBox.margin>
                                 <Insets left="6.0" right="6.0" top="5.0" />
                             </HBox.margin>
                         </ColorPicker>
-                        <ColorPicker fx:id="outlineColorPicker" onAction="#onOutlineColorChanged" prefHeight="30.0" prefWidth="120.0">
+                        <ColorPicker fx:id="outlineColorPicker" onAction="#onOutlineColourChanged" prefHeight="30.0" prefWidth="120.0">
                             <HBox.margin>
                                 <Insets left="6.0" right="6.0" top="5.0" />
                             </HBox.margin>

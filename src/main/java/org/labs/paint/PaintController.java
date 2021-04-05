@@ -13,16 +13,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import org.labs.paint.actions.DrawingHistory;
 import org.labs.paint.factory.*;
 import org.labs.paint.shapes.ParentShape;
-import org.labs.paint.shapes.Polygon;
-import org.labs.paint.shapes.Polyline;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static org.labs.paint.actions.DrawingHistory.*;
 
 public class PaintController implements Initializable {
 
@@ -65,7 +65,6 @@ public class PaintController implements Initializable {
     private GraphicsContext mainGraphicsContext;
     private GraphicsContext previewGraphicsContext;
     private final List<ParentShapeFactory> shapeFactoryList = Arrays.asList(new LineFactory(), new RectangleFactory(), new CircleFactory(), new PolygonFactory(), new PolylineFactory());
-    private final List<ParentShape> shapesList = new ArrayList<>();
     private ParentShape currShape;
     private boolean isDrawing = false;
 
@@ -91,18 +90,17 @@ public class PaintController implements Initializable {
     }
 
     public void onCanvasClicked(MouseEvent mouseEvent) {
-        if (!isDrawing){
+        if (!isDrawing) {
             ParentShapeFactory parentShapeFactory = shapeFactoryList.get(figureComboBox.getSelectionModel().getSelectedIndex());
             currShape = parentShapeFactory.createShape(mainCanvas.getGraphicsContext2D(), new Point2D(mouseEvent.getX(), mouseEvent.getY()));
             isDrawing = true;
-        } else{
+            DrawingHistory.addShape(currShape);
+        } else {
             if (currShape.isMultipoint()) {
                 currShape.addPoint(new Point2D(mouseEvent.getX(), mouseEvent.getY()));
-                shapesList.add(currShape);
             } else {
                 currShape.draw(mainGraphicsContext);
                 prevCanvas.setVisible(false);
-                shapesList.add(currShape);
                 isDrawing = false;
             }
         }
@@ -119,19 +117,26 @@ public class PaintController implements Initializable {
     }
 
     public void onKeyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ENTER && currShape.isMultipoint()){
+        if (keyEvent.getCode() == KeyCode.ENTER && currShape.isMultipoint()) {
             currShape.delLastPoint();
             currShape.draw(mainGraphicsContext);
             prevCanvas.setVisible(false);
             isDrawing = false;
         }
+        if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.Z) {
+            if (keyEvent.isShiftDown()){
+                DrawingHistory.redo(mainGraphicsContext);
+            } else {
+                DrawingHistory.undo(mainGraphicsContext, mainCanvas.getWidth(), mainCanvas.getHeight());
+            }
+        }
     }
 
-    public void onFillColorChanged(ActionEvent actionEvent) {
+    public void onFillColourChanged(ActionEvent actionEvent) {
         mainGraphicsContext.setFill(fillColorPicker.getValue());
     }
 
-    public void onOutlineColorChanged(ActionEvent actionEvent) {
+    public void onOutlineColourChanged(ActionEvent actionEvent) {
         mainGraphicsContext.setStroke(outlineColorPicker.getValue());
     }
 
