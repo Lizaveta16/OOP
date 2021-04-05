@@ -12,7 +12,7 @@ public class DrawingHistory {
     private static int maxCount = 0;
 
     public static void addShape(ParentShape shape) {
-        if (drawnShapesCount == maxCount) {
+        if (drawnShapesCount == shapesList.size()) {
             shapesList.add(shape);
         } else {
             shapesList.set(drawnShapesCount, shape);
@@ -33,11 +33,10 @@ public class DrawingHistory {
     }
 
     public static void redo(GraphicsContext gc) {
-        if (drawnShapesCount == maxCount) {
+        if (drawnShapesCount >= maxCount) {
             return;
         }
         drawnShapesCount++;
         shapesList.get(drawnShapesCount - 1).draw(gc);
-
     }
 }
