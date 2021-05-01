@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -13,24 +12,25 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.labs.paint.actions.DrawingHistory;
+import org.labs.paint.actions.MyPoint2D;
 import org.labs.paint.factory.*;
 import org.labs.paint.shapes.ParentShape;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static org.labs.paint.actions.DrawingHistory.*;
+import static org.labs.paint.actions.Serializer.*;
 
 public class PaintController implements Initializable {
 
     @FXML
     private MenuBar menu;
-
-    @FXML
-    private HBox controlPanel;
 
     @FXML
     private ColorPicker fillColorPicker;
@@ -43,18 +43,6 @@ public class PaintController implements Initializable {
 
     @FXML
     private ComboBox<String> figureComboBox;
-
-    @FXML
-    private Label fullColorLabel;
-
-    @FXML
-    private Label outlineLabel;
-
-    @FXML
-    private Label thicknessLabel;
-
-    @FXML
-    private Label figureLabel;
 
     @FXML
     private Canvas mainCanvas;
@@ -80,9 +68,7 @@ public class PaintController implements Initializable {
         thicknessOutlineBox.setValue(1);
 
         mainGraphicsContext = mainCanvas.getGraphicsContext2D();
-        mainGraphicsContext.setFill(fillColorPicker.getValue());
-        mainGraphicsContext.setStroke(outlineColorPicker.getValue());
-        mainGraphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
+        updateGraphicsContext();
 
         previewGraphicsContext = prevCanvas.getGraphicsContext2D();
         prevCanvas.setVisible(false);
@@ -92,12 +78,12 @@ public class PaintController implements Initializable {
     public void onCanvasClicked(MouseEvent mouseEvent) {
         if (!isDrawing) {
             ParentShapeFactory parentShapeFactory = shapeFactoryList.get(figureComboBox.getSelectionModel().getSelectedIndex());
-            currShape = parentShapeFactory.createShape(mainCanvas.getGraphicsContext2D(), new Point2D(mouseEvent.getX(), mouseEvent.getY()));
+            currShape = parentShapeFactory.createShape(mainCanvas.getGraphicsContext2D(), new MyPoint2D(mouseEvent.getX(), mouseEvent.getY()));
             isDrawing = true;
             DrawingHistory.addShape(currShape);
         } else {
             if (currShape.isMultipoint()) {
-                currShape.addPoint(new Point2D(mouseEvent.getX(), mouseEvent.getY()));
+                currShape.addPoint(new MyPoint2D(mouseEvent.getX(), mouseEvent.getY()));
             } else {
                 currShape.draw(mainGraphicsContext);
                 prevCanvas.setVisible(false);
@@ -111,7 +97,7 @@ public class PaintController implements Initializable {
         if (isDrawing) {
             prevCanvas.setVisible(true);
             previewGraphicsContext.clearRect(0, 0, prevCanvas.getWidth(), prevCanvas.getHeight());
-            currShape.update(new Point2D(mouseEvent.getX(), mouseEvent.getY()));
+            currShape.update(new MyPoint2D(mouseEvent.getX(), mouseEvent.getY()));
             currShape.draw(previewGraphicsContext);
         }
     }
@@ -124,10 +110,11 @@ public class PaintController implements Initializable {
             isDrawing = false;
         }
         if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.Z) {
-            if (keyEvent.isShiftDown()){
+            if (keyEvent.isShiftDown()) {
                 DrawingHistory.redo(mainGraphicsContext);
             } else {
                 DrawingHistory.undo(mainGraphicsContext, mainCanvas.getWidth(), mainCanvas.getHeight());
+                updateGraphicsContext();
             }
         }
     }
@@ -144,4 +131,28 @@ public class PaintController implements Initializable {
         mainGraphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
     }
 
+    public void updateGraphicsContext() {
+        mainGraphicsContext.setFill(fillColorPicker.getValue());
+        mainGraphicsContext.setStroke(outlineColorPicker.getValue());
+        mainGraphicsContext.setLineWidth(thicknessOutlineBox.getSelectionModel().getSelectedItem());
+    }
+
+    public void saveAsFile(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Сохранить как...");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
+        File file = fileChooser.showSaveDialog(Stage.getWindows().get(0));
+        serialize(DrawingHistory.getShapesList(), file);
+    }
+
+    public void openFile(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Открыть");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
+        File file = fileChooser.showOpenDialog(Stage.getWindows().get(0));
+        DrawingHistory.setShapesList(deserialize(file));
+        mainGraphicsContext.clearRect(0, 0, prevCanvas.getWidth(), prevCanvas.getHeight());
+        DrawingHistory.drawShapes(mainGraphicsContext);
+        updateGraphicsContext();
+    }
 }

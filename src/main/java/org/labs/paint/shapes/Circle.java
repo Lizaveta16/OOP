@@ -2,20 +2,46 @@ package org.labs.paint.shapes;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Light;
+import org.labs.paint.actions.MyPoint2D;
 
 public class Circle extends ParentShape{
 
     private double height;
     private double width;
-    private Point2D leftUpperCorner;
+    private MyPoint2D leftUpperCorner;
 
-    public Circle(GraphicsContext graphicsContext, Point2D leftUpperCorner, double height, double width) {
+    public Circle(GraphicsContext graphicsContext, MyPoint2D leftUpperCorner, double height, double width) {
 
         super(graphicsContext);
         this.height = height;
         this.width = width;
         this.leftUpperCorner = leftUpperCorner;
         multipoint = false;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public MyPoint2D getLeftUpperCorner() {
+        return leftUpperCorner;
+    }
+
+    public void setLeftUpperCorner(MyPoint2D leftUpperCorner) {
+        this.leftUpperCorner = leftUpperCorner;
     }
 
     @Override
@@ -31,7 +57,7 @@ public class Circle extends ParentShape{
     }
 
     @Override
-    public void update(Point2D newPoint) {
+    public void update(MyPoint2D newPoint) {
         height = newPoint.getY() - leftUpperCorner.getY();
         width = newPoint.getX() - leftUpperCorner.getX();
     }

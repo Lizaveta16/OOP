@@ -11,6 +11,33 @@ public class DrawingHistory {
     private static int drawnShapesCount = 0;
     private static int maxCount = 0;
 
+    public static ArrayList<ParentShape> getShapesList() {
+        if (drawnShapesCount != maxCount) {
+            ArrayList<ParentShape> newShapesList = new ArrayList<>();
+            for (int i = 0; i < drawnShapesCount; i++) {
+                newShapesList.add(shapesList.get(i));
+            }
+            return newShapesList;
+        } else {
+            return shapesList;
+        }
+    }
+
+    public static void setShapesList(ArrayList<ParentShape> shapesList) {
+        DrawingHistory.shapesList = shapesList;
+    }
+
+    public static void setDrawnShapesCount(int drawnShapesCount) {
+        DrawingHistory.drawnShapesCount = drawnShapesCount;
+        maxCount = drawnShapesCount;
+    }
+
+    public static void drawShapes(GraphicsContext gc) {
+        for (ParentShape shape : shapesList) {
+            shape.draw(gc);
+        }
+    }
+
     public static void addShape(ParentShape shape) {
         if (drawnShapesCount == shapesList.size()) {
             shapesList.add(shape);
