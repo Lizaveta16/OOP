@@ -2,10 +2,12 @@ package org.labs.paint.actions;
 
 import com.google.gson.*;
 import javafx.scene.paint.Color;
+import org.labs.paint.PluginLoader;
 import org.labs.paint.shapes.ParentShape;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Serializer {
 
@@ -38,6 +40,7 @@ public class Serializer {
             FileReader fileReader = new FileReader(file);
             BufferedReader reader = new BufferedReader(fileReader);
             int k = 1;
+            List<ParentShape> pluginsClasses = new PluginLoader().getAllShapes();
             JsonStreamParser jsonParser = new JsonStreamParser(reader);
             while (jsonParser.hasNext()) {
                 JsonElement e = jsonParser.next();
@@ -45,7 +48,16 @@ public class Serializer {
                     if (k % 2 != 0) {
                         figureType = e.getAsJsonObject().get("class").getAsString();
                     } else {
-                        shape = (ParentShape) gson.fromJson(e, Class.forName(figureType));
+                        shape=null;
+                        for(int i=0; i<pluginsClasses.size(); i++){
+                            if(pluginsClasses.get(i).getClass().getName().equals(figureType)) {
+                                ClassLoader loader = pluginsClasses.get(i).getClass().getClassLoader();
+                                shape = (ParentShape) gson.fromJson(e, Class.forName(figureType, false, loader));
+                                break;
+                            }
+                        }
+                        if(shape==null){
+                        shape = (ParentShape) gson.fromJson(e, Class.forName(figureType));}
                         shapesList.add(shape);
                     }
                 }

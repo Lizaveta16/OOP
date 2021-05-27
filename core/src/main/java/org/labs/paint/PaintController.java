@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.labs.paint.actions.DrawingHistory;
@@ -19,8 +18,9 @@ import org.labs.paint.actions.MyPoint2D;
 import org.labs.paint.factory.*;
 import org.labs.paint.shapes.ParentShape;
 
-import java.io.File;
+import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -52,16 +52,25 @@ public class PaintController implements Initializable {
 
     private GraphicsContext mainGraphicsContext;
     private GraphicsContext previewGraphicsContext;
-    private final List<ParentShapeFactory> shapeFactoryList = Arrays.asList(new LineFactory(), new RectangleFactory(), new CircleFactory(), new PolygonFactory(), new PolylineFactory());
+    private final List<ParentShapeFactory> shapeFactoryList = new ArrayList<>(Arrays.asList(new LineFactory(), new RectangleFactory(), new CircleFactory(), new PolygonFactory(), new PolylineFactory()));
     private ParentShape currShape;
     private boolean isDrawing = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        ObservableList<String> figureList = FXCollections.observableArrayList("Отрезок", "Прямоугольник", "Эллипс", "Многоугольник", "Ломаная");
+        ObservableList<String> figureList = FXCollections.observableArrayList();
+        List<ParentShapeFactory> factories = new PluginLoader().getAllFactories();
+
+        for (ParentShapeFactory factory: factories) {
+            shapeFactoryList.add(factory);
+        }
+        for (ParentShapeFactory factory: shapeFactoryList){
+            figureList.add(factory.getName());
+        }
+
         figureComboBox.getItems().setAll(figureList);
-        figureComboBox.setValue("Отрезок");
+        figureComboBox.setValue(figureList.get(0));
 
         ObservableList<Integer> thicknessOutlineList = FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         thicknessOutlineBox.getItems().setAll(thicknessOutlineList);
@@ -72,7 +81,6 @@ public class PaintController implements Initializable {
 
         previewGraphicsContext = prevCanvas.getGraphicsContext2D();
         prevCanvas.setVisible(false);
-
     }
 
     public void onCanvasClicked(MouseEvent mouseEvent) {
