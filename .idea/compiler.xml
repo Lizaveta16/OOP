@@ -7,11 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
+        <module name="TrapezoidModule" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="trapezoid" target="15" />
-      <module name="TrapezoidModule" target="15" />
     </bytecodeTargetLevel>
   </component>
 </project>
